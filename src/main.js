@@ -168,21 +168,21 @@ const render = () => {
   app.innerHTML = `
     <main class="page">
       <section class="panel">
-        <p class="eyebrow">n8n workflow uploader</p>
-        <h1>Detector de secciones en transcripciones</h1>
+        <p class="eyebrow">Sube y descarga</p>
+        <h1>Encuentra los temas de tu transcripcion</h1>
         <p class="intro">
-          Sube uno o varios archivos de transcripcion para enviarlos al webhook de n8n y descargar el resultado procesado.
+          Sube uno o varios archivos y al final descargas un archivo con los temas encontrados.
         </p>
 
         <label class="dropzone" for="files">
-          <span class="dropzone-title">Selecciona tus archivos</span>
-          <span class="dropzone-copy">Formatos permitidos: .srt, .json, .txt</span>
+          <span class="dropzone-title">Elige tus archivos</span>
+          <span class="dropzone-copy">Puedes subir archivos .srt, .json y .txt</span>
           <input id="files" name="files" type="file" accept="${acceptedTypes}" multiple />
         </label>
 
         <section class="file-list" aria-live="polite">
           <div class="file-list-header">
-            <h2>Archivos seleccionados</h2>
+            <h2>Tus archivos</h2>
             <span>${state.files.length} archivo(s)</span>
           </div>
           ${
@@ -196,14 +196,14 @@ const render = () => {
                       </li>`,
                   )
                   .join('')}</ul>`
-              : '<p class="empty-state">Todavia no has seleccionado archivos.</p>'
+              : '<p class="empty-state">Aun no has elegido archivos.</p>'
           }
         </section>
 
         <button class="submit" type="button" ${
           state.isLoading ? 'disabled' : ''
         }>
-          ${state.isLoading ? 'Procesando...' : 'Procesar transcripciones'}
+          ${state.isLoading ? 'Buscando temas...' : 'Buscar temas'}
         </button>
 
         ${
