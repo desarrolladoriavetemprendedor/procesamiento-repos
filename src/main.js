@@ -6,7 +6,7 @@ const acceptedTypes = acceptedExtensions.join(',');
 const testWebhookPattern = /\/webhook-test(\/|$)/i;
 
 const state = {
-  files: [],
+  file: null,
   isLoading: false,
   message: '',
   error: false,
@@ -54,18 +54,25 @@ const clearDownloadUrl = () => {
 };
 
 const updateFiles = (fileList) => {
-  const files = Array.from(fileList).filter(isValidFile);
-  state.files = files;
+  const [selectedFile] = Array.from(fileList);
 
-  if (files.length !== fileList.length) {
+  if (!selectedFile) {
+    state.file = null;
+    setMessage('Selecciona un archivo.', false);
+    return;
+  }
+
+  if (!isValidFile(selectedFile)) {
+    state.file = null;
     setMessage(
-      'Algunos archivos fueron ignorados. Solo se permiten archivos .srt, .json y .txt.',
+      'Solo se permiten archivos .srt, .json y .txt.',
       true,
     );
     return;
   }
 
-  setMessage(files.length ? '' : 'Selecciona al menos un archivo.', false);
+  state.file = selectedFile;
+  setMessage('', false);
 };
 
 const downloadTextFile = async (response) => {
@@ -108,13 +115,13 @@ const processFiles = async () => {
     return;
   }
 
-  if (!state.files.length) {
-    setMessage('Selecciona al menos un archivo antes de procesar.', true);
+  if (!state.file) {
+    setMessage('Selecciona un archivo antes de procesar.', true);
     return;
   }
 
   const formData = new FormData();
-  state.files.forEach((file) => formData.append('files', file));
+  formData.append('files', state.file);
 
   try {
     setLoading(true);
@@ -171,32 +178,29 @@ const render = () => {
         <p class="eyebrow">Sube y descarga</p>
         <h1>Encuentra los temas de tu transcripcion</h1>
         <p class="intro">
-          Sube uno o varios archivos y al final descargas un archivo con los temas encontrados.
+          Sube un archivo y al final descargas un archivo con los temas encontrados.
         </p>
 
         <label class="dropzone" for="files">
-          <span class="dropzone-title">Elige tus archivos</span>
-          <span class="dropzone-copy">Puedes subir archivos .srt, .json y .txt</span>
-          <input id="files" name="files" type="file" accept="${acceptedTypes}" multiple />
+          <span class="dropzone-title">Elige tu archivo</span>
+          <span class="dropzone-copy">Puedes subir un archivo .srt, .json o .txt</span>
+          <input id="files" name="files" type="file" accept="${acceptedTypes}" />
         </label>
 
         <section class="file-list" aria-live="polite">
           <div class="file-list-header">
-            <h2>Tus archivos</h2>
-            <span>${state.files.length} archivo(s)</span>
+            <h2>Tu archivo</h2>
+            <span>${state.file ? '1 archivo' : '0 archivos'}</span>
           </div>
           ${
-            state.files.length
-              ? `<ul>${state.files
-                  .map(
-                    (file) => `
-                      <li>
-                        <span class="file-name">${file.name}</span>
-                        <span class="file-size">${formatBytes(file.size)}</span>
-                      </li>`,
-                  )
-                  .join('')}</ul>`
-              : '<p class="empty-state">Aun no has elegido archivos.</p>'
+            state.file
+              ? `<ul>
+                  <li>
+                    <span class="file-name">${state.file.name}</span>
+                    <span class="file-size">${formatBytes(state.file.size)}</span>
+                  </li>
+                </ul>`
+              : '<p class="empty-state">Aun no has elegido un archivo.</p>'
           }
         </section>
 

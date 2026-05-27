@@ -39,10 +39,10 @@ npm run build
 ## Comportamiento
 
 - La app solo envia archivos al webhook configurado en `VITE_N8N_WEBHOOK_URL`.
-- Los archivos se mandan mediante `fetch` usando `FormData`.
-- Todos los archivos seleccionados se agregan con `formData.append('files', file)`.
+- El archivo se manda mediante `fetch` usando `FormData`.
+- El archivo seleccionado se agrega con `formData.append('files', file)`.
 - No se define manualmente el header `Content-Type`, para que el navegador agregue el boundary correcto de `multipart/form-data`.
-- Si seleccionas varios archivos, todos se envian bajo el mismo campo `files`.
+- La interfaz solo permite seleccionar y enviar 1 archivo por vez.
 - Si el webhook responde correctamente, la respuesta se trata como `blob` y la descarga comienza automaticamente como `secciones_detectadas.txt`.
 - Si `response.ok` es `false`, la app intenta leer `response.text()` y muestra ese mensaje al usuario.
 - No se manejan API keys ni credenciales en el frontend.
